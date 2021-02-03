@@ -44,7 +44,7 @@ static unsigned int encode(unsigned int count, unsigned char* in, unsigned char*
 		*out++ = intChar[c&0xF];
 	}
 	*out++ = '\r';
-	*out++ = '\n';
+	*out++ = '\n';	
 
 	return (1+(count<<1)+2);
 }
@@ -61,7 +61,8 @@ static void writeExtendedLinearAddress(void)
 	bin_data[k++] = 0x04;
 	bin_data[k++] = (unsigned char)((begin>>24)&0xFF);
 	bin_data[k++] = (unsigned char)((begin>>16)&0xFF);
-	bin_data[k++] = checkSum(k,bin_data);
+	bin_data[k] = checkSum(k,bin_data);
+	k++;
 	count = encode(k,bin_data,hex_str);
 	fwrite(hex_str,1,count,out_file);
 }
@@ -76,7 +77,8 @@ static void writeEndOfFile(void)
 	bin_data[k++] = 0x00;
 	bin_data[k++] = 0x00;
 	bin_data[k++] = 0x01;
-	bin_data[k++] = checkSum(k,bin_data);
+	bin_data[k] = checkSum(k,bin_data);
+	k++;
 	count = encode(k,bin_data,hex_str);
 	fwrite(hex_str,1,count,out_file);
 }
@@ -88,7 +90,7 @@ static void writeDataRecord(unsigned int len,unsigned char* p)
 	unsigned char bin_data[BIN_DATA_LEN];
 	unsigned char hex_str[BIN_DATA_LEN];
 
-	for(count=0;count<len;count++)
+	/*for(count=0;count<len;count++)
 	{
 		if(IGNOR_DATA!=*(p+count))
 		{
@@ -98,7 +100,7 @@ static void writeDataRecord(unsigned int len,unsigned char* p)
 	if(count>=len)
 	{
 		return;
-	}
+	}*/
 	
 	bin_data[k++] = len;
 	bin_data[k++] = (unsigned char)((offset>>8)&0xFF);
@@ -108,7 +110,8 @@ static void writeDataRecord(unsigned int len,unsigned char* p)
 	{
 		bin_data[k++] = *p++;
 	}
-	bin_data[k++] = checkSum(k,bin_data);
+	bin_data[k] = checkSum(k,bin_data);
+	k++;
 	count = encode(k,bin_data,hex_str);
 	fwrite(hex_str,1,count,out_file);
 }
