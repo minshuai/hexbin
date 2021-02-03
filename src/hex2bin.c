@@ -5,7 +5,7 @@
 #include "stdlib.h"
 #include "string.h"
 
-#define	log //
+#define	log //printf
 
 #define	NORMAL_ADDRESS	0
 #define	SEGMENT_ADDRESS	1
@@ -68,7 +68,7 @@ static void text2Char(unsigned char* p)
 static void writeData(unsigned int offset,unsigned char count,unsigned char* p)
 {
 	unsigned int address1,address2;
-	unsigned char count1,count2;
+	unsigned int count1,count2;
 	unsigned char* ptr;
 
 	//log("data getted\r\n");
@@ -95,7 +95,7 @@ static void writeData(unsigned int offset,unsigned char count,unsigned char* p)
 			break;
 		case SEGMENT_ADDRESS:
 			address1 = base_address + offset;
-			address2 = base_address + ((offset+count-1) & 0xFFFF);
+			address2 = base_address + ((offset+count-1) & 0xFFFFF);	
 			if(address2<address1)
 			{
 				address2 = base_address & 0xFFFF0000;
@@ -174,7 +174,7 @@ static void writeData(unsigned int offset,unsigned char count,unsigned char* p)
 }
 static void decode(unsigned int count, unsigned char* p)
 {
-	unsigned char length;
+	unsigned int length;
 	unsigned int i,offset;
 
 	for(i=0;i<count;i++)
@@ -256,7 +256,8 @@ static void decode(unsigned int count, unsigned char* p)
 }
 static unsigned int parseString(unsigned int count, unsigned char* p)
 {
-	unsigned char len[2],length;
+	unsigned char len[2];
+  unsigned int length;
 	unsigned int i,start;
 	
 	for(i=0;i<count;i++)
